@@ -72,7 +72,7 @@ class ConversationArea extends StatelessWidget {
                   onPressed: onPressedStop,
                   child: SizedBox(
                       height : 35,
-                      child: const Icon(Icons.stop, size: 32)),
+                      child: const Icon(Icons.stop, size: 30)),
                   backgroundColor: !isMine ? whiteColor : indigoColor,
                   foregroundColor: !isMine ? indigoColor : whiteColor,
                 ),
@@ -81,7 +81,7 @@ class ConversationArea extends StatelessWidget {
                 : FloatingActionButton(
               heroTag: isMine ? 'mine' : 'yours',
               onPressed: onPressed,
-              child: const Icon(Icons.mic, size: 32,),
+              child: const Icon(Icons.mic, size: 30,),
               backgroundColor: !isMine ? whiteColor : indigoColor,
               foregroundColor: !isMine ? indigoColor : whiteColor,
             ),

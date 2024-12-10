@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:flutter/services.dart';
+import 'package:vibration/vibration.dart';
 import '../managers/language_select_control.dart';
 import '../managers/translate_by_googleserver.dart';
 import '../screens/language_select_screen.dart';
@@ -30,6 +32,7 @@ class _ConversationPageState extends State<ConversationPage> {
     googleTranslator.initializeTranslateByGoogleServer();
     speechToText.initialize();
     initializeTTS();
+    setupVolumeButtons();
   }
 
   @override
@@ -39,6 +42,16 @@ class _ConversationPageState extends State<ConversationPage> {
 
   initializeTTS() async {
     tts.setLanguage(languageSelectControl.yourLanguageItem.sttLangCode!);
+  }
+
+  void setupVolumeButtons() {
+    HardwareButtons.volumeButtonEvents.listen((event) {
+      if (event == VolumeButtonEvent.VOLUME_UP) {
+        onPressedRecordingBtn(isMine: false);
+      } else if (event == VolumeButtonEvent.VOLUME_DOWN) {
+        onPressedRecordingBtn(isMine: true);
+      }
+    });
   }
 
   Future<void> onPressedRecordingBtn({required bool isMine}) async {
@@ -93,6 +106,10 @@ class _ConversationPageState extends State<ConversationPage> {
               setState(() {
               });
 
+              if (await Vibration.hasVibrator() ?? false) {
+                Vibration.vibrate(duration: 100);
+              }
+
               tts.speak(translation ?? "");
             } else {
               debugPrint("Translation Failed: $translation");
@@ -135,6 +152,41 @@ class _ConversationPageState extends State<ConversationPage> {
     });
   }
 
+  void showVolumeSettingsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Volume Settings"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Slider(
+                value: 0.5, // Replace with current volume value
+                onChanged: (value) {
+                  // Update volume value logic here
+                },
+                min: 0.0,
+                max: 1.0,
+                divisions: 10,
+                label: "50%",
+              ),
+              const Text("Adjust your device's volume.")
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Close"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,6 +225,14 @@ class _ConversationPageState extends State<ConversationPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
+            ),
+          ),
+          Positioned(
+            top: 30,
+            right: 4,
+            child: IconButton(
+              icon: const Icon(Icons.volume_up, color: Colors.white),
+              onPressed: showVolumeSettingsDialog,
             ),
           ),
         ],
@@ -224,7 +284,7 @@ class _ConversationPageState extends State<ConversationPage> {
             width: 50,
             height: 54,
             color: Colors.black38,
-            child: const Icon(Icons.swap_horiz, color: Colors.indigo),
+            child: const Icon(Icons.swap_horiz, color: Colors.white),
           ),
         ),
         Expanded(

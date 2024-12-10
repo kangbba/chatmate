@@ -25,6 +25,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/google_sign_in-6.2.2" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/android_intent_plus-5.2.0" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.3.4" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/device_info_plus-11.1.1" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/vibration-2.0.1" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
