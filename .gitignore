@@ -25,3 +25,5 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+android/app/google-services.json
+lib/secrets/secret_keys.dart
