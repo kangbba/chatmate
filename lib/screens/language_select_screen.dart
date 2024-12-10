@@ -39,7 +39,7 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios, color: Colors.indigo),
@@ -47,15 +47,12 @@ class _LanguageSelectScreenState extends State<LanguageSelectScreen> {
                       Navigator.of(context).pop(); // 뒤로가기
                     },
                   ),
-                  SizedBox(width: 100,),
-                  Row(
-                    children: [
-                      Text(
-                        "Selected : ${selectedLanguage.menuDisplayStr!}",
-                        style: TextStyle(fontSize: 16, color: Colors.grey[900]),
-                      ),
-                    ],
-                  ),
+                  Expanded(
+                    child: Text(
+                      "Selected : ${selectedLanguage.menuDisplayStr!}",
+                      style: TextStyle(fontSize: 16, color: Colors.grey[900]),
+                    ),
+                  )
                 ],
               ),
             ),

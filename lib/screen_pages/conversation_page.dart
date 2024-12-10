@@ -5,6 +5,7 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../managers/language_select_control.dart';
 import '../managers/translate_by_googleserver.dart';
+import '../screens/language_select_screen.dart';
 import 'conversation_area.dart';
 
 class ConversationPage extends StatefulWidget {
@@ -18,8 +19,8 @@ class _ConversationPageState extends State<ConversationPage> {
   final FlutterTts tts = FlutterTts();
   final SpeechToText speechToText = SpeechToText();
 
-  String myResultString = "Start speaking...";
-  String yourResultString = "Waiting for input...";
+  String myResultString = "마이크 버튼을 눌러 시작";
+  String yourResultString = "";
   bool isMyRecording = false;
   bool isYourRecording = false;
 
@@ -28,11 +29,16 @@ class _ConversationPageState extends State<ConversationPage> {
     super.initState();
     googleTranslator.initializeTranslateByGoogleServer();
     speechToText.initialize();
+    initializeTTS();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  initializeTTS() async {
+    tts.setLanguage(languageSelectControl.yourLanguageItem.sttLangCode!);
   }
 
   Future<void> onPressedRecordingBtn({required bool isMine}) async {
@@ -42,9 +48,16 @@ class _ConversationPageState extends State<ConversationPage> {
         ? languageSelectControl.myLanguageItem
         : languageSelectControl.yourLanguageItem;
 
+
+    String othersSttLangCode = isMine ? languageSelectControl.yourLanguageItem.sttLangCode!
+        : languageSelectControl.myLanguageItem.sttLangCode!;
+    String othersGoogleLangCode = isMine ? languageSelectControl.yourLanguageItem.langCodeGoogleServer!
+        : languageSelectControl.myLanguageItem.langCodeGoogleServer!;
+
     if (!speechToText.isAvailable) {
       await speechToText.initialize();
     }
+    tts.setLanguage(othersSttLangCode);
 
     if (speechToText.isAvailable) {
       setState(() {
@@ -63,38 +76,29 @@ class _ConversationPageState extends State<ConversationPage> {
             // 자동으로 녹음 중단 처리
             onPressedStopBtn(isMine: isMine);
 
-            String resultStr = result.recognizedWords;
-            String othersSttLangCode = isMine ? languageSelectControl.yourLanguageItem.sttLangCode!
-                : languageSelectControl.myLanguageItem.sttLangCode!;
-            String othersGoogleLangCode = isMine ? languageSelectControl.yourLanguageItem.langCodeGoogleServer!
-                : languageSelectControl.myLanguageItem.langCodeGoogleServer!;
+            String resultStr = result.recognizedWords;;
 
             // 번역 수행
             String? translation = await googleTranslator.textTranslate(
               resultStr,
               othersGoogleLangCode,
             );
-            if(translation != null && translation.isNotEmpty){
+            if (translation != null && translation.isNotEmpty) {
               debugPrint("Translation Succeed: $translation");
-              if(isMine){
+              if (isMine) {
                 yourResultString = translation;
-              }
-              else{
+              } else {
                 myResultString = translation;
               }
               setState(() {
               });
 
-              // 번역된 텍스트를 음성으로 출력
-              await tts.setLanguage(othersSttLangCode);
               tts.speak(translation ?? "");
-            }
-            else{
+            } else {
               debugPrint("Translation Failed: $translation");
-              if(isMine){
+              if (isMine) {
                 myResultString = originalString;
-              }
-              else{
+              } else {
                 yourResultString = originalString;
               }
               setState(() {
@@ -134,30 +138,124 @@ class _ConversationPageState extends State<ConversationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: ConversationArea(
-              isMine: false,
-              text: yourResultString,
-              isRecording: isYourRecording,
-              isDisabled: isMyRecording,
-              onPressed: () => onPressedRecordingBtn(isMine: false),
-              onPressedStop: () => onPressedStopBtn(isMine: false),
-            ),
+          Column(
+            children: [
+              Expanded(
+                child: ConversationArea(
+                  isMine: false,
+                  text: yourResultString,
+                  isRecording: isYourRecording,
+                  isDisabled: isMyRecording,
+                  onPressed: () => onPressedRecordingBtn(isMine: false),
+                  onPressedStop: () => onPressedStopBtn(isMine: false),
+                ),
+              ),
+              buildLanguageLayout(),
+              Expanded(
+                child: ConversationArea(
+                  isMine: true,
+                  text: myResultString,
+                  isRecording: isMyRecording,
+                  isDisabled: isYourRecording,
+                  onPressed: () => onPressedRecordingBtn(isMine: true),
+                  onPressedStop: () => onPressedStopBtn(isMine: true),
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: ConversationArea(
-              isMine: true,
-              text: myResultString,
-              isRecording: isMyRecording,
-              isDisabled: isYourRecording,
-              onPressed: () => onPressedRecordingBtn(isMine: true),
-              onPressedStop: () => onPressedStopBtn(isMine: true),
+          Positioned(
+            top: 30,
+            left: 4,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildLanguageLayout() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: StreamBuilder<LanguageItem>(
+            stream: languageSelectControl.myLanguageItemStream,
+            initialData: languageSelectControl.myLanguageItem,
+            builder: (context, snapshot) {
+              return GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LanguageSelectScreen(
+                      languageSelectControl: languageSelectControl,
+                      isMyLanguage: true,
+                    ),
+                  ),
+                ),
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    snapshot.data?.menuDisplayStr ?? "",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.indigo, fontSize: 16),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            setState(() {
+              final temp = languageSelectControl.myLanguageItem;
+              languageSelectControl.myLanguageItem = languageSelectControl.yourLanguageItem;
+              languageSelectControl.yourLanguageItem = temp;
+            });
+          },
+          child: Container(
+            width: 50,
+            height: 54,
+            color: Colors.black38,
+            child: const Icon(Icons.swap_horiz, color: Colors.indigo),
+          ),
+        ),
+        Expanded(
+          child: StreamBuilder<LanguageItem>(
+            stream: languageSelectControl.yourLanguageItemStream,
+            initialData: languageSelectControl.yourLanguageItem,
+            builder: (context, snapshot) {
+              return GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LanguageSelectScreen(
+                      languageSelectControl: languageSelectControl,
+                      isMyLanguage: false,
+                    ),
+                  ),
+                ),
+                child: Container(
+                  color: Colors.indigo,
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    snapshot.data?.menuDisplayStr ?? "",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

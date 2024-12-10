@@ -29,16 +29,16 @@ class ConversationArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: isMine ? indigoColor : whiteColor,
+      color: !isMine ? indigoColor : whiteColor,
       child: Stack(
         children: [
           Center(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.only(left: 8, right: 8, bottom: 40.0, top : 12),
               child: AutoSizeText(
                 text,
                 style: TextStyle(
-                  color: isMine ? whiteColor : indigoColor,
+                  color: !isMine ? whiteColor : indigoColor,
                   fontSize: maxFontSize,
                 ),
                 textAlign: TextAlign.center,
@@ -52,6 +52,7 @@ class ConversationArea extends StatelessWidget {
             right: 20,
             child: isDisabled
                 ? FloatingActionButton(
+              heroTag: isMine ? 'mine-disabled' : 'yours-disabled',
               onPressed: null,
               child: const Icon(Icons.mic_off),
               backgroundColor: Colors.grey,
@@ -59,24 +60,30 @@ class ConversationArea extends StatelessWidget {
             )
                 : isRecording
                 ? RippleAnimation(
-              color: isMine ? whiteColor : indigoColor,
-              delay: const Duration(milliseconds: 200),
+              color: !isMine ? whiteColor : indigoColor,
+              delay: const Duration(milliseconds: 300),
               repeat: true,
-              minRadius: 20,
-              ripplesCount: 6,
-              duration: const Duration(milliseconds: 1800),
-              child: FloatingActionButton(
-                onPressed: onPressedStop,
-                child: const Icon(Icons.stop, size: 28),
-                backgroundColor: isMine ? whiteColor : indigoColor,
-                foregroundColor: isMine ? indigoColor : whiteColor,
+              minRadius: 50,
+              ripplesCount: 2,
+              duration: const Duration(milliseconds: 2000),
+              child: SizedBox(
+                child: FloatingActionButton(
+                  heroTag: isMine ? 'mine-recording' : 'yours-recording',
+                  onPressed: onPressedStop,
+                  child: SizedBox(
+                      height : 35,
+                      child: const Icon(Icons.stop, size: 32)),
+                  backgroundColor: !isMine ? whiteColor : indigoColor,
+                  foregroundColor: !isMine ? indigoColor : whiteColor,
+                ),
               ),
             )
                 : FloatingActionButton(
+              heroTag: isMine ? 'mine' : 'yours',
               onPressed: onPressed,
-              child: const Icon(Icons.mic),
-              backgroundColor: isMine ? whiteColor : indigoColor,
-              foregroundColor: isMine ? indigoColor : whiteColor,
+              child: const Icon(Icons.mic, size: 32,),
+              backgroundColor: !isMine ? whiteColor : indigoColor,
+              foregroundColor: !isMine ? indigoColor : whiteColor,
             ),
           ),
         ],
