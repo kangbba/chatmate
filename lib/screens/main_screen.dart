@@ -1,4 +1,5 @@
 import 'package:chatmate/custom_widget/simple_separator.dart';
+import 'package:chatmate/screen_pages/conversation_page.dart';
 import 'package:flutter/material.dart';
 import '../screen_pages/translating_page.dart';
 import '../screen_pages/room_selecting_page.dart';
@@ -76,6 +77,30 @@ class MainScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+                // 통역 버튼
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.interpreter_mode, size: 40),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ConversationPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    const Text(
+                      "대화",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
                 // 채팅 버튼
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -105,11 +130,11 @@ class MainScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.camera, size: 40, color: Colors.grey),
+                      icon: const Icon(Icons.camera_alt, size: 40, color: Colors.grey),
                       onPressed: null, // 비활성화 상태
                     ),
                     const Text(
-                      "이미지",
+                      "사진번역",
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey,
