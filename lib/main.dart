@@ -5,16 +5,14 @@ import 'package:firebase_core/firebase_core.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // FirebaseOptions를 제거
-  //
-  // await Firebase.initializeApp(
-  //     options: FirebaseOptions(
-  //       apiKey: firebaseApiKey,
-  //       appId: firebaseAppId,
-  //       messagingSenderId: firebaseMessagingSenderId,
-  //       projectId: firebaseProjectId,
-  //     )
-  // );
+  await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: firebaseApiKey,
+        appId: firebaseAppId,
+        messagingSenderId: firebaseMessagingSenderId,
+        projectId: firebaseProjectId,
+      )
+  );
 
 
   runApp(MyApp(),);

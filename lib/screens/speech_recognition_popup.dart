@@ -4,6 +4,7 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 import '../managers/language_select_control.dart';
 
@@ -63,7 +64,6 @@ class _SpeechRecognitionPopUpState extends State<SpeechRecognitionPopUp> {
     _speech.initialize(
       onError: _handleError,
       onStatus: (status) => debugPrint('Speech Status: $status'),
-
     ).then((available) {
       if (available) {
         _startListening();
@@ -111,7 +111,7 @@ class _SpeechRecognitionPopUpState extends State<SpeechRecognitionPopUp> {
   }
 
   void _startBackBtnTimer() {
-    _backBtnTimer = Timer(const Duration(seconds: 1), () {
+    _backBtnTimer = Timer(const Duration(milliseconds: 500), () {
       setState(() {
         _backBtnAvailable = true;
       });
@@ -144,11 +144,13 @@ class _SpeechRecognitionPopUpState extends State<SpeechRecognitionPopUp> {
 
   void _cancelPopUp() {
     if (_isPopCompleted) return; // Prevent double pop invocation
+
+    debugPrint("테스트 취소");
     _isPopCompleted = true; // Set flag to true after the first call
     _stopTimers();
     _speech.stop();
     widget.onCanceled?.call();
-    Navigator.pop(context);
+    Navigator.pop(context, _textController.text);
   }
 
   void _completePopUp() {
@@ -167,15 +169,13 @@ class _SpeechRecognitionPopUpState extends State<SpeechRecognitionPopUp> {
       child: Padding(
         padding: const EdgeInsets.all(22.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // 세로 중앙 정렬
+          crossAxisAlignment: CrossAxisAlignment.center, // 가로 중앙 정렬
           children: [
-            Stack(
-              children: [
-                _buildBackButton(),
-                _buildRippleAnimation(),
-              ],
-            ),
-           // _buildTitle(),
-            _buildTextField(),
+            Expanded(flex : 1, child: _buildBackButton()),
+            Expanded(flex : 1, child: _buildRippleAnimation()),
+            Expanded(flex : 6, child: _buildAutoSizeText()), // AutoSizeText 적용
+            Expanded(flex : 3, child: Container())
           ],
         ),
       ),
@@ -201,46 +201,33 @@ class _SpeechRecognitionPopUpState extends State<SpeechRecognitionPopUp> {
     );
   }
 
-  Widget _buildTitle() {
-    return Text(
-      widget.titleText,
-      style: const TextStyle(fontSize: 16, height: 1.1, color: Colors.black),
-    );
-  }
-
   Widget _buildRippleAnimation() {
-    return Expanded(
-      flex: 1,
-      child: Center(
-        child: RippleAnimation(
-          color: widget.backgroundColor,
-          delay: const Duration(milliseconds: 200),
-          repeat: true,
-          minRadius: 20,
-          ripplesCount: 2,
-          duration: const Duration(milliseconds: 1800),
-          child: Icon(
-            widget.icon,
-            color: widget.iconColor,
-            size: 20,
-          ),
+    return Center(
+      child: RippleAnimation(
+        color: widget.backgroundColor,
+        delay: const Duration(milliseconds: 200),
+        repeat: true,
+        minRadius: 20,
+        ripplesCount: 2,
+        duration: const Duration(milliseconds: 1800),
+        child: Icon(
+          widget.icon,
+          color: widget.iconColor,
+          size: 20,
         ),
       ),
     );
   }
 
-  Widget _buildTextField() {
-    return Expanded(
-      flex: 3,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: TextField(
+  Widget _buildAutoSizeText() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Center(
+        child: AutoSizeText(
+          _textController.text,
           textAlign: TextAlign.center,
-          decoration: const InputDecoration(border: InputBorder.none),
-          readOnly: true,
-          maxLines: 6,
-          controller: _textController,
           style: TextStyle(fontSize: widget.fontSize, height: 1.25),
+          maxLines: 6,
         ),
       ),
     );

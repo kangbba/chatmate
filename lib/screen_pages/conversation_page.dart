@@ -156,7 +156,6 @@ class _ConversationPageState extends State<ConversationPage> {
                   onPressedStop: () => onPressedStopBtn(isMine: false),
                 ),
               ),
-              buildLanguageLayout(),
               Expanded(
                 child: ConversationArea(
                   isMine: true,
@@ -179,87 +178,85 @@ class _ConversationPageState extends State<ConversationPage> {
               },
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              switchBtn(),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  languageDisplayer(false, Colors.indigo, Colors.white),
+                  languageDisplayer(true, Colors.white, Colors.indigo),
+                ],
+              ),
+              SizedBox(
+                width: 24,
+              )
+            ],
+          ),
         ],
       ),
     );
   }
+  Widget switchBtn() {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          final temp = languageSelectControl.myLanguageItem;
+          languageSelectControl.myLanguageItem = languageSelectControl.yourLanguageItem;
+          languageSelectControl.yourLanguageItem = temp;
 
-  Widget buildLanguageLayout() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: StreamBuilder<LanguageItem>(
-            stream: languageSelectControl.myLanguageItemStream,
-            initialData: languageSelectControl.myLanguageItem,
-            builder: (context, snapshot) {
-              return GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LanguageSelectScreen(
-                      languageSelectControl: languageSelectControl,
-                      isMyLanguage: true,
-                    ),
-                  ),
-                ),
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    snapshot.data?.menuDisplayStr ?? "",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.indigo, fontSize: 16),
-                  ),
-                ),
-              );
-            },
-          ),
+          final temp2 = myResultString;
+          myResultString = yourResultString;
+          yourResultString = temp2;
+        });
+      },
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          shape: BoxShape.circle, // 원형으로 변경
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26, // 그림자 색상
+              offset: Offset(2, 2), // 그림자의 위치
+              blurRadius: 8, // 흐림 정도
+              spreadRadius: 1, // 그림자 확산 정도
+            ),
+          ],
         ),
-        InkWell(
-          onTap: () {
-            setState(() {
-              final temp = languageSelectControl.myLanguageItem;
-              languageSelectControl.myLanguageItem = languageSelectControl.yourLanguageItem;
-              languageSelectControl.yourLanguageItem = temp;
-            });
-          },
+        child: const Icon(Icons.swap_vert, color: Colors.white, size: 24),
+      ),
+    );
+  }
+
+  Widget languageDisplayer(bool isMine, Color backgroundColor, Color textColor){
+    return StreamBuilder<LanguageItem>(
+      stream: isMine ? languageSelectControl.myLanguageItemStream : languageSelectControl.yourLanguageItemStream,
+      initialData: isMine ? languageSelectControl.myLanguageItem : languageSelectControl.yourLanguageItem,
+      builder: (context, snapshot) {
+        return GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LanguageSelectScreen(
+                languageSelectControl: languageSelectControl,
+                isMyLanguage: isMine,
+              ),
+            ),
+          ),
           child: Container(
-            width: 50,
-            height: 54,
-            color: Colors.black38,
-            child: const Icon(Icons.swap_horiz, color: Colors.white),
+            color: backgroundColor,
+            padding: const EdgeInsets.only(left: 8, top: 4, bottom: 4),
+            child: Text(
+              snapshot.data?.menuDisplayStr ?? "",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: textColor, fontSize: 16),
+            ),
           ),
-        ),
-        Expanded(
-          child: StreamBuilder<LanguageItem>(
-            stream: languageSelectControl.yourLanguageItemStream,
-            initialData: languageSelectControl.yourLanguageItem,
-            builder: (context, snapshot) {
-              return GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LanguageSelectScreen(
-                      languageSelectControl: languageSelectControl,
-                      isMyLanguage: false,
-                    ),
-                  ),
-                ),
-                child: Container(
-                  color: Colors.indigo,
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    snapshot.data?.menuDisplayStr ?? "",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

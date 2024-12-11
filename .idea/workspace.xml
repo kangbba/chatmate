@@ -10,25 +10,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a292420e-6376-4765-9283-6b5897938dc3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/android/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/deploymentTargetDropDown.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/kotlinc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/migrations.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/android/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/services/vibrate_utils.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/services/volume_control.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/chatmate.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/chatmate.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/flutter_01.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/kotlin/com/chatus/chatmate/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/kotlin/com/chatus/chatmate/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/settings.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screen_pages/conversation_area.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/conversation_area.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screen_pages/conversation_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/conversation_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screen_pages/dialogue_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/dialogue_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screen_pages/language_setting_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/language_setting_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screen_pages/room_selecting_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/room_selecting_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screen_pages/translating_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/translating_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/speech_recognition_popup.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/speech_recognition_popup.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

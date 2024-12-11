@@ -39,13 +39,21 @@ class _RoomSelectingPageState extends State<RoomSelectingPage>{
         title: const Text('Rooms', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
         elevation: 1,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white), // 원하는 아이콘으로 변경
+          onPressed: () {
+            Navigator.pop(context); // 뒤로가기 동작
+          },
+        ),
         actions: [
           IconButton(
             icon: Stack(
               children: [
-                Padding(padding: EdgeInsets.only(left: 5, top: 1),
-                    child: const Icon(Icons.add, size: 30, color: Colors.white)),
-                const Icon(Icons.chat_bubble_outline_sharp, size: 40, color: Colors.white,),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5, top: 1),
+                  child: const Icon(Icons.add, size: 30, color: Colors.white),
+                ),
+                const Icon(Icons.chat_bubble_outline_sharp, size: 40, color: Colors.white),
               ],
             ),
             onPressed: () async {
@@ -54,7 +62,7 @@ class _RoomSelectingPageState extends State<RoomSelectingPage>{
           )
         ],
       ),
-      body: StreamBuilder<List<ChatRoom>>(
+    body: StreamBuilder<List<ChatRoom>>(
         stream: _chatProvider.chatRoomsStream(),
         initialData: [],
         builder: (BuildContext context, snapshot) {

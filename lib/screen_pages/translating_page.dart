@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:chatmate/screen_pages/conversation_area.dart';
+import 'package:chatmate/services/vibrate_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -100,16 +102,22 @@ class _TranslatingPageState extends State<TranslatingPage> {
 
 
   onPressedRecordingBtn() async{
+    if(isRecordingBtnPressed){
+      return;
+    }
     try {
       tts.setLanguage(currentYourLangItem.langCodeGoogleServer!);
 
+      isRecordingBtnPressed = true;
       String resultStr = await showVoicePopUp(currentMyLangItem);
       if (resultStr.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("오류: 녹음된 내용이 없습니다.")),
         );
+        isRecordingBtnPressed = false;
         return;
       }
+      isRecordingBtnPressed = false;
 
       // 녹음된 텍스트를 아래 텍스트 필드에 표시
       setState(() {
@@ -117,7 +125,7 @@ class _TranslatingPageState extends State<TranslatingPage> {
       });
 
       String? translation = await googleTranslator.textTranslate(resultStr, currentYourLangItem.langCodeGoogleServer!);
-
+      VibrationUtils.vibrate();
       // 번역된 텍스트를 위 텍스트 필드에 표시
       setState(() {
         _topController.text = translation ?? '';
@@ -128,6 +136,7 @@ class _TranslatingPageState extends State<TranslatingPage> {
 
       tts.speak(translation ?? '');
     } catch (e) {
+      isRecordingBtnPressed = false;
     }
   }
 
@@ -182,170 +191,133 @@ class _TranslatingPageState extends State<TranslatingPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // 주요 콘텐츠
-          Column(
-            children: [
-              Expanded(
-                child: OrientationBuilder(
-                  builder: (context, orientation) {
-                    return Row(
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    color: Colors.indigo,
+                    child:
+                    ConversationArea(isMine: false, text: _topController.text, isRecording: false, isDisabled: false, onPressed: null, onPressedStop: (){})
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    color: Colors.white,
+                    child: Stack(
                       children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  color: Colors.indigo,
-                                  child: TextField(
-                                    controller: _topController,
-                                    readOnly: true,
-                                    maxLines: null,
-                                    expands: true,
-                                    textAlign: TextAlign.center,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.all(10),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              buildLanguageLayout(),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  color: Colors.white,
-                                  child: TextField(
-                                    controller: _bottomController,
-                                    readOnly: true,
-                                    maxLines: null,
-                                    expands: true,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 18,
-                                    ),
-                                    decoration: const InputDecoration(
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.all(10),
-                                      hintText: '마이크 버튼을 눌러 번역 시작',
-                                      hintStyle: TextStyle(color: Colors.grey),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                        ConversationArea(
+                            isMine: true,
+                            text: _bottomController.text,
+                            isRecording: false,
+                            isDisabled: false,
+                            onPressed: () => onPressedRecordingBtn(),
+                            onPressedStop: (){}
                         ),
                       ],
-                    );
-                  },
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          // 뒤로가기 버튼
-          Positioned(
-            top: 30, // 화면 상단에서의 간격
-            left: 10, // 화면 왼쪽에서의 간격
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
-              onPressed: () {
-                Navigator.pop(context); // 뒤로가기 동작
-              },
+              ],
             ),
-          ),
-        ],
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                switchBtn(),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    languageDisplayer(false, Colors.indigo, Colors.white),
+                    languageDisplayer(true, Colors.white, Colors.indigo),
+                  ],
+                ),
+                SizedBox(
+                  width: 24,
+                )
+              ],
+            ),
+
+            Positioned(left : 8, top : 20, child: backBtn()),
+          ],
+        ),
       ),
-      floatingActionButton: _audioRecordBtn(),
+    );
+  }
+  Widget backBtn(){
+    // 뒤로가기 버튼
+    return IconButton(
+      icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 30),
+      onPressed: () {
+        Navigator.pop(context); // 뒤로가기 동작
+      },
     );
   }
 
-  Widget buildLanguageLayout() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: StreamBuilder<LanguageItem>(
-            stream: languageSelectControl.myLanguageItemStream,
-            initialData: languageSelectControl.myLanguageItem,
-            builder: (context, snapshot) {
-              return GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LanguageSelectScreen(
-                      languageSelectControl: languageSelectControl,
-                      isMyLanguage: true,
-                    ),
-                  ),
-                ),
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    snapshot.data?.menuDisplayStr ?? "",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.indigo, fontSize: 16),
-                  ),
-                ),
-              );
-            },
-          ),
+  Widget switchBtn() {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          final temp = languageSelectControl.myLanguageItem;
+          languageSelectControl.myLanguageItem = languageSelectControl.yourLanguageItem;
+          languageSelectControl.yourLanguageItem = temp;
+
+          final temp2 = _topController.text;
+          _topController.text = _bottomController.text;
+          _bottomController.text = temp2;
+        });
+      },
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: Colors.grey,
+          shape: BoxShape.circle, // 원형으로 변경
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26, // 그림자 색상
+              offset: Offset(2, 2), // 그림자의 위치
+              blurRadius: 8, // 흐림 정도
+              spreadRadius: 1, // 그림자 확산 정도
+            ),
+          ],
         ),
-        InkWell(
-          onTap: () {
-            setState(() {
-              final temp = languageSelectControl.myLanguageItem;
-              languageSelectControl.myLanguageItem = languageSelectControl.yourLanguageItem;
-              languageSelectControl.yourLanguageItem = temp;
-            });
-          },
+        child: const Icon(Icons.swap_vert, color: Colors.white, size: 24),
+      ),
+    );
+  }
+
+  Widget languageDisplayer(bool isMine, Color backgroundColor, Color textColor){
+    return StreamBuilder<LanguageItem>(
+      stream: isMine ? languageSelectControl.myLanguageItemStream : languageSelectControl.yourLanguageItemStream,
+      initialData: isMine ? languageSelectControl.myLanguageItem : languageSelectControl.yourLanguageItem,
+      builder: (context, snapshot) {
+        return GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LanguageSelectScreen(
+                languageSelectControl: languageSelectControl,
+                isMyLanguage: isMine,
+              ),
+            ),
+          ),
           child: Container(
-            width: 50,
-            height: 54,
-            color: Colors.black38,
-            child: const Icon(Icons.swap_horiz, color: Colors.white),
+            color: backgroundColor,
+            padding: const EdgeInsets.only(left: 8, top: 4, bottom: 4),
+            child: Text(
+              snapshot.data?.menuDisplayStr ?? "",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: textColor, fontSize: 16),
+            ),
           ),
-        ),
-        Expanded(
-          child: StreamBuilder<LanguageItem>(
-            stream: languageSelectControl.yourLanguageItemStream,
-            initialData: languageSelectControl.yourLanguageItem,
-            builder: (context, snapshot) {
-              return GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LanguageSelectScreen(
-                      languageSelectControl: languageSelectControl,
-                      isMyLanguage: false,
-                    ),
-                  ),
-                ),
-                child: Container(
-                  color: Colors.indigo,
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    snapshot.data?.menuDisplayStr ?? "",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

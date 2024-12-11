@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:chatmate/services/volume_control.dart';
+
 import '../classes/room_settings.dart';
 import '../custom_widget/simple_separator.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +35,7 @@ class _AudiencePageState extends State<DialoguePage> {
   final ItemScrollController _itemScrollController = ItemScrollController();
   Map<int, UserModel?> cachedUserModels = {}; // index별로 user data cache 유지
 
+
   List<Dialogue> dialogues = [];
   Map<String, Map<String, String>> translatedDialogues = {};
   bool isLoading = true;
@@ -48,12 +51,14 @@ class _AudiencePageState extends State<DialoguePage> {
     googleTranslator.initializeTranslateByGoogleServer();
     initializeLanguages();
     initializeDialogues(languageSelectControl.myLanguageItem);
+    VolumeControl.initialize(onVolumeUpPressed: (){}, onVolumeDownPressed: ()=>onPressedRecordBtn());
   }
 
   @override
   void dispose() {
     _dialogueSubscription?.cancel();
     _languageSubscription?.cancel();
+    VolumeControl.dispose();
     super.dispose();
   }
 
@@ -380,9 +385,11 @@ class _AudiencePageState extends State<DialoguePage> {
       setState(() {});
     } catch (e) {
       debugPrint("AudioRecordBtn: Error adding dialogue - $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("오류: 대화를 추가하는 중 문제가 발생했습니다.")),
-      );
+      if(mounted){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("오류: 대화를 추가하는 중 문제가 발생했습니다.")),
+        );
+      }
     }
   }
 

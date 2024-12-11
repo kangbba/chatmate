@@ -5,7 +5,7 @@ import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 // 전역 변수로 색상과 텍스트 크기 설정
 const Color indigoColor = Colors.indigo;
 const Color whiteColor = Colors.white;
-const double maxFontSize = 24.0;
+const double maxFontSize = 26.0;
 const double minFontSize = 14.0;
 
 class ConversationArea extends StatelessWidget {
@@ -13,7 +13,7 @@ class ConversationArea extends StatelessWidget {
   final String text;
   final bool isRecording;
   final bool isDisabled;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final VoidCallback onPressedStop;
 
   const ConversationArea({
@@ -34,12 +34,13 @@ class ConversationArea extends StatelessWidget {
         children: [
           Center(
             child: Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8, bottom: 40.0, top : 12),
+              padding: const EdgeInsets.only(left: 8, right: 8, bottom: 20.0, top : 12),
               child: AutoSizeText(
                 text,
                 style: TextStyle(
                   color: !isMine ? whiteColor : indigoColor,
                   fontSize: maxFontSize,
+                  fontWeight: FontWeight.bold
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 3,
@@ -48,9 +49,9 @@ class ConversationArea extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 20,
-            right: 20,
-            child: isDisabled
+            bottom: 10,
+            right: 10,
+            child: onPressed == null ? Container() : isDisabled
                 ? FloatingActionButton(
               heroTag: isMine ? 'mine-disabled' : 'yours-disabled',
               onPressed: null,
