@@ -411,4 +411,5 @@ class _AudiencePageState extends State<DialoguePage> {
     ) ?? '';
     return speechStr;
   }
+
 }

@@ -1,10 +1,11 @@
 // conversation_page.dart
+import 'package:chatmate/services/vibrate_utils.dart';
+import 'package:chatmate/services/volume_control.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter/services.dart';
-import 'package:vibration/vibration.dart';
 import '../managers/language_select_control.dart';
 import '../managers/translate_by_googleserver.dart';
 import '../screens/language_select_screen.dart';
@@ -32,26 +33,20 @@ class _ConversationPageState extends State<ConversationPage> {
     googleTranslator.initializeTranslateByGoogleServer();
     speechToText.initialize();
     initializeTTS();
-    setupVolumeButtons();
+    VolumeControl.initialize(
+        onVolumeUpPressed: ()=> onPressedRecordingBtn(isMine: false),
+        onVolumeDownPressed: ()=> onPressedRecordingBtn(isMine: true),
+    );
   }
 
   @override
   void dispose() {
+    VolumeControl.dispose();
     super.dispose();
   }
 
   initializeTTS() async {
     tts.setLanguage(languageSelectControl.yourLanguageItem.sttLangCode!);
-  }
-
-  void setupVolumeButtons() {
-    HardwareButtons.volumeButtonEvents.listen((event) {
-      if (event == VolumeButtonEvent.VOLUME_UP) {
-        onPressedRecordingBtn(isMine: false);
-      } else if (event == VolumeButtonEvent.VOLUME_DOWN) {
-        onPressedRecordingBtn(isMine: true);
-      }
-    });
   }
 
   Future<void> onPressedRecordingBtn({required bool isMine}) async {
@@ -61,10 +56,11 @@ class _ConversationPageState extends State<ConversationPage> {
         ? languageSelectControl.myLanguageItem
         : languageSelectControl.yourLanguageItem;
 
-
-    String othersSttLangCode = isMine ? languageSelectControl.yourLanguageItem.sttLangCode!
+    String othersSttLangCode = isMine
+        ? languageSelectControl.yourLanguageItem.sttLangCode!
         : languageSelectControl.myLanguageItem.sttLangCode!;
-    String othersGoogleLangCode = isMine ? languageSelectControl.yourLanguageItem.langCodeGoogleServer!
+    String othersGoogleLangCode = isMine
+        ? languageSelectControl.yourLanguageItem.langCodeGoogleServer!
         : languageSelectControl.myLanguageItem.langCodeGoogleServer!;
 
     if (!speechToText.isAvailable) {
@@ -86,30 +82,22 @@ class _ConversationPageState extends State<ConversationPage> {
         onResult: (result) async {
           _handleSpeechResult(result, isMine);
           if (result.finalResult) {
-            // 자동으로 녹음 중단 처리
             onPressedStopBtn(isMine: isMine);
+            String resultStr = result.recognizedWords;
 
-            String resultStr = result.recognizedWords;;
-
-            // 번역 수행
             String? translation = await googleTranslator.textTranslate(
               resultStr,
               othersGoogleLangCode,
             );
             if (translation != null && translation.isNotEmpty) {
+              VibrationUtils.vibrate();
               debugPrint("Translation Succeed: $translation");
               if (isMine) {
                 yourResultString = translation;
               } else {
                 myResultString = translation;
               }
-              setState(() {
-              });
-
-              if (await Vibration.hasVibrator() ?? false) {
-                Vibration.vibrate(duration: 100);
-              }
-
+              setState(() {});
               tts.speak(translation ?? "");
             } else {
               debugPrint("Translation Failed: $translation");
@@ -118,8 +106,7 @@ class _ConversationPageState extends State<ConversationPage> {
               } else {
                 yourResultString = originalString;
               }
-              setState(() {
-              });
+              setState(() {});
             }
           }
         },
@@ -150,41 +137,6 @@ class _ConversationPageState extends State<ConversationPage> {
         yourResultString = result.recognizedWords;
       }
     });
-  }
-
-  void showVolumeSettingsDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Volume Settings"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Slider(
-                value: 0.5, // Replace with current volume value
-                onChanged: (value) {
-                  // Update volume value logic here
-                },
-                min: 0.0,
-                max: 1.0,
-                divisions: 10,
-                label: "50%",
-              ),
-              const Text("Adjust your device's volume.")
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text("Close"),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -225,14 +177,6 @@ class _ConversationPageState extends State<ConversationPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-            ),
-          ),
-          Positioned(
-            top: 30,
-            right: 4,
-            child: IconButton(
-              icon: const Icon(Icons.volume_up, color: Colors.white),
-              onPressed: showVolumeSettingsDialog,
             ),
           ),
         ],

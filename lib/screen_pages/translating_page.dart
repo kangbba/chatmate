@@ -8,7 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart'; // SharedPreference
 
 import '../managers/language_select_control.dart';
 import '../managers/translate_by_googleserver.dart';
+import '../screens/language_select_screen.dart';
 import '../screens/speech_recognition_popup.dart';
+import '../services/volume_control.dart';
 import 'language_setting_screen.dart';
 
 class TranslatingPage extends StatefulWidget {
@@ -36,7 +38,22 @@ class _TranslatingPageState extends State<TranslatingPage> {
     googleTranslator.initializeTranslateByGoogleServer();
     initializeLanguages();
     loadLastTranslation(); // 최근 번역된 내용 로드
+    VolumeControl.initialize(
+      onVolumeUpPressed: (){},
+      onVolumeDownPressed: ()=> onPressedRecordingBtn(),
+    );
   }
+
+  @override
+  void dispose() {
+    VolumeControl.dispose();
+    myLanguageSubscription?.cancel();
+    yourLanguageSubscription?.cancel();
+    _topController.dispose();
+    _bottomController.dispose();
+    super.dispose();
+  }
+
 
   Future<void> initializeLanguages() async {
     try {
@@ -81,13 +98,37 @@ class _TranslatingPageState extends State<TranslatingPage> {
     });
   }
 
-  @override
-  void dispose() {
-    myLanguageSubscription?.cancel();
-    yourLanguageSubscription?.cancel();
-    _topController.dispose();
-    _bottomController.dispose();
-    super.dispose();
+
+  onPressedRecordingBtn() async{
+    try {
+      tts.setLanguage(currentYourLangItem.langCodeGoogleServer!);
+
+      String resultStr = await showVoicePopUp(currentMyLangItem);
+      if (resultStr.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("오류: 녹음된 내용이 없습니다.")),
+        );
+        return;
+      }
+
+      // 녹음된 텍스트를 아래 텍스트 필드에 표시
+      setState(() {
+        _bottomController.text = resultStr;
+      });
+
+      String? translation = await googleTranslator.textTranslate(resultStr, currentYourLangItem.langCodeGoogleServer!);
+
+      // 번역된 텍스트를 위 텍스트 필드에 표시
+      setState(() {
+        _topController.text = translation ?? '';
+      });
+
+      // 저장
+      await saveLastTranslation(resultStr, translation ?? '');
+
+      tts.speak(translation ?? '');
+    } catch (e) {
+    }
   }
 
   Future<String> showVoicePopUp(LanguageItem languageItem) async {
@@ -131,35 +172,7 @@ class _TranslatingPageState extends State<TranslatingPage> {
           backgroundColor: MaterialStateProperty.all(Colors.redAccent),
         ),
         onPressed: () async {
-          try {
-            tts.setLanguage(currentYourLangItem.langCodeGoogleServer!);
-
-            String resultStr = await showVoicePopUp(currentMyLangItem);
-            if (resultStr.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("오류: 녹음된 내용이 없습니다.")),
-              );
-              return;
-            }
-
-            // 녹음된 텍스트를 아래 텍스트 필드에 표시
-            setState(() {
-              _bottomController.text = resultStr;
-            });
-
-            String? translation = await googleTranslator.textTranslate(resultStr, currentYourLangItem.langCodeGoogleServer!);
-
-            // 번역된 텍스트를 위 텍스트 필드에 표시
-            setState(() {
-              _topController.text = translation ?? '';
-            });
-
-            // 저장
-            await saveLastTranslation(resultStr, translation ?? '');
-
-            tts.speak(translation ?? '');
-          } catch (e) {
-          }
+          onPressedRecordingBtn();
         },
         child: isRecordingBtnPressed
             ? LoadingAnimationWidget.staggeredDotsWave(size: 33, color: Colors.white)
@@ -206,18 +219,7 @@ class _TranslatingPageState extends State<TranslatingPage> {
                                   ),
                                 ),
                               ),
-                              Container(
-                                height: 5,
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      spreadRadius: 1,
-                                      blurRadius: 5,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              buildLanguageLayout(),
                               Expanded(
                                 flex: 1,
                                 child: Container(
@@ -262,26 +264,88 @@ class _TranslatingPageState extends State<TranslatingPage> {
               },
             ),
           ),
-          // 언어 설정 버튼
-          Positioned(
-            top: 30, // 화면 상단에서의 간격
-            right: 10, // 화면 오른쪽에서의 간격
-            child: IconButton(
-              icon: const Icon(Icons.language, color: Colors.white, size: 40),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return const LanguageSettingScreen();
-                  },
-                );
-              },
-            ),
-          ),
         ],
       ),
       floatingActionButton: _audioRecordBtn(),
     );
   }
 
+  Widget buildLanguageLayout() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: StreamBuilder<LanguageItem>(
+            stream: languageSelectControl.myLanguageItemStream,
+            initialData: languageSelectControl.myLanguageItem,
+            builder: (context, snapshot) {
+              return GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LanguageSelectScreen(
+                      languageSelectControl: languageSelectControl,
+                      isMyLanguage: true,
+                    ),
+                  ),
+                ),
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    snapshot.data?.menuDisplayStr ?? "",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.indigo, fontSize: 16),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            setState(() {
+              final temp = languageSelectControl.myLanguageItem;
+              languageSelectControl.myLanguageItem = languageSelectControl.yourLanguageItem;
+              languageSelectControl.yourLanguageItem = temp;
+            });
+          },
+          child: Container(
+            width: 50,
+            height: 54,
+            color: Colors.black38,
+            child: const Icon(Icons.swap_horiz, color: Colors.white),
+          ),
+        ),
+        Expanded(
+          child: StreamBuilder<LanguageItem>(
+            stream: languageSelectControl.yourLanguageItemStream,
+            initialData: languageSelectControl.yourLanguageItem,
+            builder: (context, snapshot) {
+              return GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LanguageSelectScreen(
+                      languageSelectControl: languageSelectControl,
+                      isMyLanguage: false,
+                    ),
+                  ),
+                ),
+                child: Container(
+                  color: Colors.indigo,
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    snapshot.data?.menuDisplayStr ?? "",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }

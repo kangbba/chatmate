@@ -68,22 +68,24 @@ class ConversationArea extends StatelessWidget {
               duration: const Duration(milliseconds: 2000),
               child: SizedBox(
                 child: FloatingActionButton(
+                  shape: const CircleBorder(), // 원형으로 설정
                   heroTag: isMine ? 'mine-recording' : 'yours-recording',
                   onPressed: onPressedStop,
                   child: SizedBox(
                       height : 35,
                       child: const Icon(Icons.stop, size: 30)),
-                  backgroundColor: !isMine ? whiteColor : indigoColor,
-                  foregroundColor: !isMine ? indigoColor : whiteColor,
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
                 ),
               ),
             )
                 : FloatingActionButton(
+              shape: const CircleBorder(), // 원형으로 설정
               heroTag: isMine ? 'mine' : 'yours',
               onPressed: onPressed,
               child: const Icon(Icons.mic, size: 30,),
-              backgroundColor: !isMine ? whiteColor : indigoColor,
-              foregroundColor: !isMine ? indigoColor : whiteColor,
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
             ),
           ),
         ],
