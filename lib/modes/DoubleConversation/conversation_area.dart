@@ -38,9 +38,9 @@ class ConversationArea extends StatelessWidget {
               child: AutoSizeText(
                 text,
                 style: TextStyle(
-                  color: !isMine ? whiteColor : indigoColor,
+                  color: !isMine ? whiteColor : Colors.black87,
                   fontSize: maxFontSize,
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.normal
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 3,

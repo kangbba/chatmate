@@ -10,18 +10,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a292420e-6376-4765-9283-6b5897938dc3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/flutter_01.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/modes/DeviceConversation/device_conversation_page.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/modes/DeviceConversation/device_room_list.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/settings.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/settings.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screen_pages/conversation_area.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/conversation_area.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screen_pages/conversation_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/conversation_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screen_pages/dialogue_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/dialogue_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screen_pages/language_setting_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/language_setting_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screen_pages/room_selecting_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/room_selecting_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screen_pages/translating_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screen_pages/translating_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/speech_recognition_popup.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/speech_recognition_popup.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screen_pages/conversation_area.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modes/DoubleConversation/conversation_area.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screen_pages/conversation_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modes/DoubleConversation/double_conversation_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screen_pages/dialogue_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modes/ServerConversation/server_conversation_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screen_pages/room_displayer.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modes/ServerConversation/room_displayer.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screen_pages/room_selecting_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modes/ServerConversation/server_room_list.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screen_pages/room_title_setting_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modes/ServerConversation/room_title_setting_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screen_pages/translating_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modes/SoloConversation/solo_conversation_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/login_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/main_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/main_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/room_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modes/ServerConversation/server_room_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,11 +71,21 @@
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "main",
     "io.flutter.reload.alreadyRun": "true",
-    "last_opened_file_path": "/Users/ensayne/AndroidStudioProjects/Flutter/chatmate",
+    "last_opened_file_path": "/Users/ensayne/AndroidStudioProjects/Flutter/chatmate/lib/modes/DeviceConversation",
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib/modes/DeviceConversation" />
+      <recent name="$PROJECT_DIR$/lib/modes" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib/modes/ServerConversation" />
+      <recent name="$PROJECT_DIR$/lib/modes/DoubleConversation" />
+      <recent name="$PROJECT_DIR$/lib/modes/SoloConversation" />
+      <recent name="$PROJECT_DIR$/lib/modes" />
+    </key>
     <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
       <recent name="com.chatus.chatmate" />
     </key>

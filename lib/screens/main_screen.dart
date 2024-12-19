@@ -1,12 +1,25 @@
+import 'package:chatmate/classes/chat_room.dart';
 import 'package:chatmate/custom_widget/simple_separator.dart';
-import 'package:chatmate/screen_pages/conversation_page.dart';
+import 'package:chatmate/modes/DeviceConversation/device_conversation_page.dart';
+import 'package:chatmate/modes/DoubleConversation/double_conversation_page.dart';
 import 'package:flutter/material.dart';
-import '../screen_pages/translating_page.dart';
-import '../screen_pages/room_selecting_page.dart';
+import '../managers/chat_provider.dart';
+import '../managers/my_auth_provider.dart';
+import '../modes/DeviceConversation/device_room_list.dart';
+import '../modes/SoloConversation/solo_conversation_page.dart';
+import '../modes/ServerConversation/server_room_list.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+
+  final _authProvider = MyAuthProvider.instance;
+  final _chatProvider = ChatProvider.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +76,7 @@ class MainScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => TranslatingPage(),
+                            builder: (context) => SoloConversationPage(),
                           ),
                         );
                       },
@@ -87,7 +100,7 @@ class MainScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ConversationPage(),
+                            builder: (context) => DeviceRoomList(),
                           ),
                         );
                       },
@@ -111,7 +124,7 @@ class MainScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => RoomSelectingPage(),
+                            builder: (context) => ServerRoomList(),
                           ),
                         );
                       },
@@ -153,4 +166,5 @@ class MainScreen extends StatelessWidget {
       ),
     );
   }
+
 }

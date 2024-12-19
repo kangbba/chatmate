@@ -1,27 +1,28 @@
 import 'dart:ui';
 
-import 'package:chatmate/screen_pages/room_title_setting_page.dart';
+import 'package:chatmate/modes/ServerConversation/room_title_setting_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import '../custom_widget/simple_dialog.dart';
-import '../managers/my_auth_provider.dart';
-import '../managers/chat_provider.dart';
+import '../../custom_widget/simple_dialog.dart';
+import '../../managers/my_auth_provider.dart';
+import '../../managers/chat_provider.dart';
 
-import '../classes/chat_room.dart';
-import '../classes/user_model.dart';
-import '../custom_widget/profile_circle_stack.dart';
-import '../managers/network_checking_service.dart';
-import '../screens/room_screen.dart';
+import '../../classes/chat_room.dart';
+import '../../classes/user_model.dart';
+import '../../custom_widget/profile_circle_stack.dart';
+import '../../managers/network_checking_service.dart';
+import '../ServerConversation/server_room_screen.dart';
+import 'device_conversation_page.dart';
 
-class RoomSelectingPage extends StatefulWidget {
-  const RoomSelectingPage({Key? key}) : super(key: key);
+class DeviceRoomList extends StatefulWidget {
+  const DeviceRoomList({Key? key}) : super(key: key);
 
   @override
-  State<RoomSelectingPage> createState() => _RoomSelectingPageState();
+  State<DeviceRoomList> createState() => _ServerRoomListState();
 }
 
-class _RoomSelectingPageState extends State<RoomSelectingPage>{
+class _ServerRoomListState extends State<DeviceRoomList>{
   NetworkCheckingService networkCheckingService = NetworkCheckingService();
   final _authProvider = MyAuthProvider.instance;
   final _chatProvider = ChatProvider.instance;
@@ -166,13 +167,42 @@ class _RoomSelectingPageState extends State<RoomSelectingPage>{
             ],
           ),
           onTap: () async {
+            bool isHost = true; // 기본값: 모바일 (호스트)
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("기기를 선택하세요"),
+                  content: const Text("현재 사용하는 기기가 모바일인가요, 전용 기기인가요?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        isHost = true; // 모바일 선택
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("모바일"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        isHost = false; // 전용기기 선택
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("전용기기"),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            // 선택 결과에 따라 페이지 이동
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RoomScreen(chatRoomToLoad: chatRoom),
+                builder: (context) => DeviceConversationPage(chatRoom: chatRoom, isHost: isHost),
               ),
             );
           },
+
         ),
       ),
     );
@@ -202,14 +232,43 @@ class _RoomSelectingPageState extends State<RoomSelectingPage>{
       if(chatRoom == null){
         return;
       }
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => RoomScreen(
-            chatRoomToLoad: chatRoom,
+      onTap: () async {
+        bool isHost = true; // 기본값: 모바일 (호스트)
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("기기를 선택하세요"),
+              content: const Text("현재 사용하는 기기가 모바일인가요, 전용 기기인가요?"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    isHost = true; // 모바일 선택
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("모바일"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    isHost = false; // 전용기기 선택
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("전용기기"),
+                ),
+              ],
+            );
+          },
+        );
+
+        // 선택 결과에 따라 페이지 이동
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                DeviceConversationPage(chatRoom: chatRoom, isHost: isHost),
           ),
-        ),
-      );
+        );
+      };
     }
   }
 }

@@ -1,4 +1,4 @@
-// conversation_page.dart
+// double_conversation_page.dart
 import 'package:chatmate/services/vibrate_utils.dart';
 import 'package:chatmate/services/volume_control.dart';
 import 'package:flutter/material.dart';
@@ -6,17 +6,17 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter/services.dart';
-import '../managers/language_select_control.dart';
-import '../managers/translate_by_googleserver.dart';
-import '../screens/language_select_screen.dart';
+import '../../managers/language_select_control.dart';
+import '../../managers/translate_by_googleserver.dart';
+import '../../screens/language_select_screen.dart';
 import 'conversation_area.dart';
 
-class ConversationPage extends StatefulWidget {
+class DoubleConversationPage extends StatefulWidget {
   @override
   _ConversationPageState createState() => _ConversationPageState();
 }
 
-class _ConversationPageState extends State<ConversationPage> {
+class _ConversationPageState extends State<DoubleConversationPage> {
   final LanguageSelectControl languageSelectControl = LanguageSelectControl.instance;
   final TranslateByGoogleServer googleTranslator = TranslateByGoogleServer();
   final FlutterTts tts = FlutterTts();

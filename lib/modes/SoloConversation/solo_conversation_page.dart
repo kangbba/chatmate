@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:chatmate/screen_pages/conversation_area.dart';
+import 'package:chatmate/modes/DoubleConversation/conversation_area.dart';
 import 'package:chatmate/services/vibrate_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -8,21 +8,21 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // SharedPreferences 추가
 
-import '../managers/language_select_control.dart';
-import '../managers/translate_by_googleserver.dart';
-import '../screens/language_select_screen.dart';
-import '../screens/speech_recognition_popup.dart';
-import '../services/volume_control.dart';
-import 'language_setting_screen.dart';
+import '../../managers/language_select_control.dart';
+import '../../managers/translate_by_googleserver.dart';
+import '../../screens/language_select_screen.dart';
+import '../../screens/speech_recognition_popup.dart';
+import '../../services/volume_control.dart';
+import '../../screen_pages/language_setting_screen.dart';
 
-class TranslatingPage extends StatefulWidget {
-  const TranslatingPage({super.key});
+class SoloConversationPage extends StatefulWidget {
+  const SoloConversationPage({super.key});
 
   @override
-  State<TranslatingPage> createState() => _TranslatingPageState();
+  State<SoloConversationPage> createState() => _SoloConversationPageState();
 }
 
-class _TranslatingPageState extends State<TranslatingPage> {
+class _SoloConversationPageState extends State<SoloConversationPage> {
   final LanguageSelectControl languageSelectControl = LanguageSelectControl.instance;
   final TextEditingController _topController = TextEditingController();
   final TextEditingController _bottomController = TextEditingController();

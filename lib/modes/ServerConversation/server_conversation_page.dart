@@ -1,33 +1,33 @@
 import 'dart:async';
 import 'package:chatmate/services/volume_control.dart';
 
-import '../classes/room_settings.dart';
-import '../custom_widget/simple_separator.dart';
+import '../../classes/room_settings.dart';
+import '../../custom_widget/simple_separator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart'; // 추가된 패키지 import
-import '../classes/chat_room.dart';
-import '../classes/dialogue.dart';
-import '../classes/user_model.dart';
-import '../custom_widget/dialogue_tile.dart';
-import '../managers/my_auth_provider.dart';
-import '../managers/translate_by_googleserver.dart';
-import '../managers/language_select_control.dart';
-import '../screens/language_select_screen.dart';
-import '../screens/speech_recognition_popup.dart';
+import '../../classes/chat_room.dart';
+import '../../classes/dialogue.dart';
+import '../../classes/user_model.dart';
+import '../../custom_widget/dialogue_tile.dart';
+import '../../managers/my_auth_provider.dart';
+import '../../managers/translate_by_googleserver.dart';
+import '../../managers/language_select_control.dart';
+import '../../screens/language_select_screen.dart';
+import '../../screens/speech_recognition_popup.dart';
 
-class DialoguePage extends StatefulWidget {
+class ServerConversationPage extends StatefulWidget {
   final ChatRoom chatRoom;
-  const DialoguePage({Key? key, required this.chatRoom}) : super(key: key);
+  const ServerConversationPage({Key? key, required this.chatRoom}) : super(key: key);
 
   @override
-  State<DialoguePage> createState() => _AudiencePageState();
+  State<ServerConversationPage> createState() => _AudiencePageState();
 }
 
-class _AudiencePageState extends State<DialoguePage> {
+class _AudiencePageState extends State<ServerConversationPage> {
   final MyAuthProvider authProvider = MyAuthProvider.instance;
   final LanguageSelectControl languageSelectControl = LanguageSelectControl.instance;
   final TranslateByGoogleServer googleTranslator = TranslateByGoogleServer();

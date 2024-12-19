@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../managers/my_auth_provider.dart';
 import '../custom_widget/simple_dialog.dart';
 import '../screens/changing_nickname_screen.dart';
-import '../screens/room_screen.dart';
+import '../modes/ServerConversation/server_room_screen.dart';
 import '../screens/main_screen.dart';
 import '../screens/signup_screen.dart';
 

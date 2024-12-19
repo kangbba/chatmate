@@ -1,11 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import '../classes/user_model.dart';
-import '../custom_widget/simple_separator.dart';
-import '../custom_widget/profile_circle.dart';
-import '../screens/title_input_screen.dart';
-import '../managers/my_auth_provider.dart';
+import '../../classes/user_model.dart';
+import '../../custom_widget/simple_separator.dart';
+import '../../custom_widget/profile_circle.dart';
+import '../../screens/title_input_screen.dart';
+import '../../managers/my_auth_provider.dart';
 
 class RoomTitleSettingPage extends StatefulWidget {
   const RoomTitleSettingPage({super.key});

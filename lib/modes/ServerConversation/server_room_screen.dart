@@ -1,22 +1,22 @@
 import 'dart:async';
-import '../custom_widget/room_drawer.dart';
-import '../screen_pages/dialogue_page.dart';
+import '../../custom_widget/room_drawer.dart';
+import 'server_conversation_page.dart';
 import 'package:flutter/material.dart';
-import '../classes/chat_room.dart';
-import '../classes/user_model.dart';
-import '../classes/room_settings.dart';
-import '../managers/my_auth_provider.dart';
+import '../../classes/chat_room.dart';
+import '../../classes/user_model.dart';
+import '../../classes/room_settings.dart';
+import '../../managers/my_auth_provider.dart';
 
-class RoomScreen extends StatefulWidget {
+class ServerRoomScreen extends StatefulWidget {
   final ChatRoom chatRoomToLoad;
 
-  RoomScreen({Key? key, required this.chatRoomToLoad}) : super(key: key);
+  ServerRoomScreen({Key? key, required this.chatRoomToLoad}) : super(key: key);
 
   @override
-  State<RoomScreen> createState() => _RoomScreenState();
+  State<ServerRoomScreen> createState() => _ServerRoomScreenState();
 }
 
-class _RoomScreenState extends State<RoomScreen> {
+class _ServerRoomScreenState extends State<ServerRoomScreen> {
   ChatRoom? chatRoom;
   bool isEntered = false;
   final MyAuthProvider authProvider = MyAuthProvider.instance;
@@ -118,7 +118,7 @@ class _RoomScreenState extends State<RoomScreen> {
           ? Center(child: CircularProgressIndicator())
           : Column(
             children: [
-              Expanded(child: DialoguePage(chatRoom: widget.chatRoomToLoad)),
+              Expanded(child: ServerConversationPage(chatRoom: widget.chatRoomToLoad)),
             ],
           ),
     );
